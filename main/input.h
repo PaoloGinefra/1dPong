@@ -8,6 +8,7 @@ typedef struct
     bool isPressed;
     bool isReleased;
     bool oldVal;
+    bool toggle;
 } Button_;
 
 Button_ b1 = {B1_PIN};
@@ -39,4 +40,10 @@ void updateButton(Button_ *b)
     b->isPressed = b->isDown && changed;
     b->isReleased = !(b->isDown) && changed;
     b->oldVal = b->isDown;
+    b->toggle |= b->isPressed;
+}
+
+void unToggleButton(Button_ *b)
+{
+    b->toggle = false;
 }

@@ -8,37 +8,83 @@
 #define LED
 #endif
 
+#ifndef ANIM
+#include "animations.h"
+#define ANIM
+#endif
+
+#ifndef GAME
+#include "game.h"
+#define GAME
+#endif
+
 void (*state)();
 
 // Function prototypes
+void transitionTo(void (*target)());
+
 void Open();
 void Life();
 void Game();
 void Winner();
 
 // Proper Functions
+void transitionTo(void (*target)())
+{
+    unToggleButton(&b1);
+    unToggleButton(&b2);
+    t = 0;
+    state = target;
+}
+
 void Open()
 {
-    Serial.println("State = Open");
-
-    ledLoop();
+    OpenAnimation();
 
     // Transition to Life state when both buttons are pressed
-    if (b1.isDown && b2.isDown)
-        state = Life;
+    if (b1.toggle && b2.toggle)
+        transitionTo(Life);
 }
 
 void Life()
 {
-    Serial.println("State = Life");
-    delay(1000);
+    LifeDisplay();
 
-    state = Game;
+    // Transition to Game state when both buttons are pressed
+    if (b1.toggle && b2.toggle)
+        transitionTo(Game);
 }
 
 void Game()
 {
-    Serial.println("State = Game");
-
     // Game loop
+    gameStep(&game, deltaTime);
+    DisplayGame();
+
+    // Transition to Life state when a life is lost
+    if (game.lostLife)
+    {
+        resetGame(&game);
+        if (game.winner)
+        {
+            restartGame();
+            transitionTo(Winner);
+        }
+        else
+        {
+            game.lostLife = false;
+            transitionTo(Life);
+        }
+    }
+}
+
+void Winner()
+{
+    WinningAnimation();
+    if (b1.toggle && b2.toggle)
+    {
+        winningCounter = 1;
+        OpenHue = colors[0].H;
+        transitionTo(Open);
+    }
 }

@@ -13,6 +13,7 @@
 void setup()
 {
     Serial.begin(9600);
+    randomSeed(analogRead(0));
 
     inputSetup();
     ledSetup();
@@ -23,5 +24,12 @@ void setup()
 void loop()
 {
     inputLoop();
+
     state();
+
+    ledLoop();
+
+    deltaTime = millis() / 1000.0f - oldTime;
+    t += deltaTime;
+    oldTime = millis() / 1000.0f;
 }

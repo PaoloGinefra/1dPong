@@ -20,33 +20,34 @@ void ledSetup();
 void setPixel(int, RGB_ *);
 void setPixelHSV(int, HSV_ *);
 void displayColors();
-void updateColors();
+
+void cleanColors();
+
+void setAllColorsHSV(HSV_ *);
 
 // Actual functions
 /*
 This fuction needs to be called in the main setup
 */
 
-float hue = 0;
 void ledSetup()
 {
     pixels.begin();
-
-    for (int i = 0; i < NUMPIXELS; i++)
-    {
-        colors[i] = {hue, SAT, VAL};
-        pixels.setPixelColor(i, pixels.Color(0, 255, 255));
-    }
-
-    pixels.show();
+    cleanColors();
+    displayColors();
 }
 
 void ledLoop()
 {
-    updateColors();
     displayColors();
-    hue += 1;
-    hue = mod(hue, 360);
+}
+
+void cleanColors()
+{
+    for (int i = 0; i < NUMPIXELS; i++)
+    {
+        colors[i] = {0, 0, 0};
+    }
 }
 
 void displayColors()
@@ -58,13 +59,6 @@ void displayColors()
     pixels.show();
 }
 
-void updateColors()
-{
-    for (int i = 0; i < NUMPIXELS; i++)
-    {
-        colors[i] = {hue, SAT, VAL};
-    }
-}
 void setPixel(int i, RGB_ *c)
 {
     pixels.setPixelColor(i, pixels.Color(c->R, c->G, c->B));
@@ -74,4 +68,12 @@ void setPixelHSV(int i, HSV_ *c_)
 {
     RGB_ c = HSV2RGB(c_);
     setPixel(i, &c);
+}
+
+void setAllColorsHSV(HSV_ *col)
+{
+    for (int i = 0; i < NUMPIXELS; i++)
+    {
+        colors[i] = *col;
+    }
 }
