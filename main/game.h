@@ -10,6 +10,7 @@
 
 #define MAX_LIFE 3
 #define PAD_LENGTH 3
+#define INITIAL_WAIT 1
 
 typedef struct
 {
@@ -20,7 +21,7 @@ typedef struct
 typedef struct
 {
     float ballPos = NUMPIXELS / 2;
-    float ballSpeed = 50;
+    float ballSpeed = 30;
     float ballAcc = 0.1f;
     bool lostLife = false;
     int hit = 0;
@@ -32,8 +33,12 @@ Lifes_ lifes;
 Game_ game;
 
 // returns wheather a life has been lost
-void gameStep(Game_ *game, float deltaTime)
+void gameStep(Game_ *game, float deltaTime, float t)
 {
+    // Initial Wait
+    if (t <= INITIAL_WAIT)
+        return;
+
     if (game->ballPos < PAD_LENGTH && b2.isPressed || game->ballPos > NUMPIXELS - PAD_LENGTH - 1 && b1.isPressed)
     {
         game->ballSpeed *= -1;

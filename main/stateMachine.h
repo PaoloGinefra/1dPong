@@ -58,7 +58,7 @@ void Life()
 void Game()
 {
     // Game loop
-    gameStep(&game, deltaTime);
+    gameStep(&game, deltaTime, t);
     DisplayGame();
 
     // Transition to Life state when a life is lost
